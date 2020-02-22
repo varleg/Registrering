@@ -15,6 +15,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Registrering.Areas.Identity;
 using Registrering.Data;
+using Registrering.Services;
 
 namespace Registrering
 {
@@ -31,15 +32,21 @@ namespace Registrering
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDbContext<AttendeeDbContext>(options =>
+                options.UseSqlServer(
+                    Configuration.GetConnectionString("AttendeeConnection")));
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
-            services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+            services.AddDefaultIdentity<IdentityUser>()
+                .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<IdentityUser>>();
             services.AddSingleton<WeatherForecastService>();
+            services.AddTransient<IAttendeeService, AttendeeService>();
+            services.AddTransient<IMoteService, MoteService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

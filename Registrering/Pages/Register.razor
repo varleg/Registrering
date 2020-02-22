@@ -1,0 +1,142 @@
+﻿@page "/register"
+@attribute [Authorize]
+@using Registrering.Models
+@using Registrering.Services
+@using Registrering.Pages.CRUD;
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject IAttendeeService AttService
+
+@if (allemoter == null)
+{
+    <p><em>Laster...</em></p>
+    <p><em>Her er en dansende pikachu mens du venter</em></p>
+    <img src="/Animations/loading_pikachu.gif" />
+}
+else
+{
+    <h3>Registrering</h3>
+    <!--
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Navn</th>
+                <th>Område</th>
+                <th>By</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var mote in allemoter)
+            {
+                <tr>
+                    <td>@mote.CommitteeName</td>
+                    <td>@mote.ParentName</td>
+                    <td>@mote.City</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <div>
+        <input type="button" data-toggle="modal" data-target="#attendeeModal" class="btn btn-primary" value="Registrer" @onclick="(() => InitializeAttendeeObject())" />
+    </div>
+
+-->
+    <EditForm Model="@attendeeObject" OnValidSubmit="@HandleValidSubmit">
+        <div class="form-group">
+            <label for="omradeBoks">Område</label>
+            <Select id="omradeBoks"  class="form-control" @onchange="select">
+                @foreach (var omrade in omrader)
+                {
+                    <option value=@omrade.Key>@omrade.Value</option>
+                }
+            </Select>
+        </div>
+        <div class="form-group">
+            <label for="homegroup">Hjemmegruppe</label>
+            @if (grupper != null)
+            {
+                <Select id="hjemmegruppe" class="form-control" @onchange="select">
+                    @foreach (var gruppe in grupper)
+                    {
+                        <option value=@gruppe.Id>@gruppe.CommitteeName</option>
+                    }
+                </Select>
+            }
+            else
+            {
+                <select disabled>
+                    <option value="0" selected>Velg et områrde</option>
+                </select>
+            }
+        </div>
+
+        <div class="form-group">
+            <label for="dueDate">Clean Dato</label>
+            <input type="date" id="addition" name="math" max=@DateTime.Today.ToString("yyyy-MM-dd") @bind-value="@attendeeObject.SpecialDate" />
+        </div>
+        <div class="form-group">
+            <label for="status">Overnatting</label>
+            <InputSelect id="Summary" class="form-control"
+                         @bind-Value="attendeeObject.Accomodation">
+                <option value="" disabled>Skal du overnatte?</option>
+                <option value="true">
+                    Ja
+                </option>
+                <option value="false">
+                    Nei
+                </option>
+            </InputSelect>
+        </div>
+        <button type="submit" class="btn btn-primary">Registrer</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Avbryt</button>
+    </EditForm>
+
+    <!--
+    <AttendeeDetail attendeeObject="attendeeObject"></AttendeeDetail>\
+        -->
+
+}
+@code {
+
+    List<Mote> allemoter;
+    List<Mote> grupper;
+    private string omradeBoksSelected { get; set; }
+    Dictionary<string, string> omrader = new Dictionary<string, string>
+    {
+            { "East Area 1","Øst"},
+            { "East Area 2", "Øst 2"},
+            { "Middle Area", "Midt"},
+            { "North Area",  "Nord"},
+            { "South Area",  "Sør"},
+            { "West Area",   "Vest"},
+        };
+    Attendee attendeeObject = new Attendee();
+
+    protected override async Task OnInitializedAsync()
+    {
+        allemoter = await AttService.GetMoter();
+    }
+    private void InitializeAttendeeObject()
+    {
+        attendeeObject = new Attendee();
+        attendeeObject.SpecialDate = DateTime.Now;
+    }
+    private void select(ChangeEventArgs e)
+    {
+        grupper = new List<Mote>();
+        if (allemoter != null)
+        {
+            foreach (var mote in allemoter)
+            {
+                if (mote.ParentName == (string)e.Value)
+                {
+                    grupper.Add(mote);
+                }
+            }
+            this.StateHasChanged();
+        }
+    }
+    private async void HandleValidSubmit()
+    {
+
+    }
+}

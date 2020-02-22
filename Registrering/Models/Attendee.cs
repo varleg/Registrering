@@ -12,8 +12,7 @@ namespace Registrering.Models
         public int Id { get; set; }
         public string Name { get; set; }
         public bool Accomodation { get; set; }
-
         public DateTime SpecialDate { get; set; }
-
+        public Mote homeGroup { get; set; }
     }
 }

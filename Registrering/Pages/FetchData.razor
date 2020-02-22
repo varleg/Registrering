@@ -1,13 +1,12 @@
 ﻿@page "/fetchdata"
+@using Registrering.Services
+@using Registrering.Models
+@inject IAttendeeService AttService
 
-@using Registrering.Data
-@inject WeatherForecastService ForecastService
+<h1>Registrerte</h1>
 
-<h1>Weather forecast</h1>
 
-<p>This component demonstrates fetching data from a service.</p>
-
-@if (forecasts == null)
+@if (attendees == null)
 {
     <p><em>Loading...</em></p>
 }
@@ -16,31 +15,39 @@ else
     <table class="table">
         <thead>
             <tr>
-                <th>Date</th>
-                <th>Temp. (C)</th>
-                <th>Temp. (F)</th>
-                <th>Summary</th>
+                <th>Hjemmegruppe</th>
+                <th>Clean dato</th>
+                <th>Overnatte</th>
+                <th>Edit</th>
+                <th>Delete</th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var forecast in forecasts)
+            @foreach (var attendee in attendees)
             {
                 <tr>
-                    <td>@forecast.Date.ToShortDateString()</td>
-                    <td>@forecast.TemperatureC</td>
-                    <td>@forecast.TemperatureF</td>
-                    <td>@forecast.Summary</td>
+                    <td>@attendee.Name</td>
+                    <td>@attendee.SpecialDate.ToShortDateString()</td>
+                    <td>@attendee.Accomodation</td>
+                    <td><input type="button" class="btn btn-primary" value="Edit" /></td>
+                    <td><input type="button" class="btn btn-danger" value="Delete" /></td>
                 </tr>
             }
         </tbody>
     </table>
 }
+<AuthorizeView Roles="admin, user">
+    <Authorized>
+        <h1>Kun administrator</h1>
+    </Authorized>
+</AuthorizeView>
 
 @code {
-    private WeatherForecast[] forecasts;
+
+    List<Attendee> attendees;
 
     protected override async Task OnInitializedAsync()
     {
-        forecasts = await ForecastService.GetForecastAsync(DateTime.Now);
+        attendees = await AttService.Get();
     }
 }
