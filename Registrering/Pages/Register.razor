@@ -2,7 +2,6 @@
 @attribute [Authorize]
 @using Registrering.Models
 @using Registrering.Services
-@using Registrering.Pages.CRUD;
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject IAttendeeService AttService
 
@@ -14,86 +13,62 @@
 }
 else
 {
-    <h3>Registrering</h3>
-    <!--
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Navn</th>
-                <th>Område</th>
-                <th>By</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var mote in allemoter)
-            {
-                <tr>
-                    <td>@mote.CommitteeName</td>
-                    <td>@mote.ParentName</td>
-                    <td>@mote.City</td>
-                </tr>
-            }
-        </tbody>
-    </table>
-    <div>
-        <input type="button" data-toggle="modal" data-target="#attendeeModal" class="btn btn-primary" value="Registrer" @onclick="(() => InitializeAttendeeObject())" />
-    </div>
-
--->
     <EditForm Model="@attendeeObject" OnValidSubmit="@HandleValidSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
         <div class="form-group">
             <label for="omradeBoks">Område</label>
-            <Select id="omradeBoks"  class="form-control" @onchange="select">
+            <select id="omradeBoks" class="form-control" @onchange="select">
+                <option value="0" selected disabled>Velg et områrde</option>
                 @foreach (var omrade in omrader)
                 {
                     <option value=@omrade.Key>@omrade.Value</option>
                 }
-            </Select>
+            </select>
         </div>
+
         <div class="form-group">
-            <label for="homegroup">Hjemmegruppe</label>
+            <label for="homeGroup">Hjemmegruppe</label>
             @if (grupper != null)
             {
-                <Select id="hjemmegruppe" class="form-control" @onchange="select">
+                <select id="homeGroup" class="form-control" @onchange="addMote">
+                    <option value="0" disabled selected>Velg en gruppe</option>
                     @foreach (var gruppe in grupper)
                     {
                         <option value=@gruppe.Id>@gruppe.CommitteeName</option>
                     }
-                </Select>
+                </select>
             }
             else
             {
                 <select disabled>
-                    <option value="0" selected>Velg et områrde</option>
+                    <option value="0" selected>Velg en gruppe</option>
                 </select>
             }
         </div>
 
         <div class="form-group">
-            <label for="dueDate">Clean Dato</label>
-            <input type="date" id="addition" name="math" max=@DateTime.Today.ToString("yyyy-MM-dd") @bind-value="@attendeeObject.SpecialDate" />
+            <label for="DateSelect">Clean Dato</label>
+            <input type="date" class="form-control" id="DateSelect" value=@DateTime.Today.ToString("yyyy-MM-dd") min=@DateTime.Today.AddYears(-120) max=@DateTime.Today @onchange="addDate" />
         </div>
+
         <div class="form-group">
-            <label for="status">Overnatting</label>
-            <InputSelect id="Summary" class="form-control"
-                         @bind-Value="attendeeObject.Accomodation">
-                <option value="" disabled>Skal du overnatte?</option>
-                <option value="true">
+            <label for="overnatting">Overnatting</label>
+            <select id="overmatting" class="form-control"
+                    @onchange="addOvernatting">
+                <option value="" selected disabled>Skal du overnatte?</option>
+                <option value=1>
                     Ja
                 </option>
-                <option value="false">
+                <option value=0>
                     Nei
                 </option>
-            </InputSelect>
+            </select>
         </div>
         <button type="submit" class="btn btn-primary">Registrer</button>
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Avbryt</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="EditForm">Avbryt</button>
     </EditForm>
-
-    <!--
-    <AttendeeDetail attendeeObject="attendeeObject"></AttendeeDetail>\
-        -->
-
 }
 @code {
 
@@ -101,7 +76,7 @@ else
     List<Mote> grupper;
     private string omradeBoksSelected { get; set; }
     Dictionary<string, string> omrader = new Dictionary<string, string>
-    {
+{
             { "East Area 1","Øst"},
             { "East Area 2", "Øst 2"},
             { "Middle Area", "Midt"},
@@ -109,17 +84,27 @@ else
             { "South Area",  "Sør"},
             { "West Area",   "Vest"},
         };
-    Attendee attendeeObject = new Attendee();
+    private Attendee attendeeObject = new Attendee();
 
     protected override async Task OnInitializedAsync()
     {
+
         allemoter = await AttService.GetMoter();
     }
-    private void InitializeAttendeeObject()
+    private void addDate(ChangeEventArgs e)
     {
-        attendeeObject = new Attendee();
-        attendeeObject.SpecialDate = DateTime.Now;
+        string dateString = e.Value.ToString();
+        DateTime date = new DateTime();
+        if (DateTime.TryParse(dateString, out date))
+        {
+            attendeeObject.SpecialDate = date;
+        }
+        else
+        {
+            Console.Error.WriteLine("Error parsing date.");
+        }
     }
+
     private void select(ChangeEventArgs e)
     {
         grupper = new List<Mote>();
@@ -137,6 +122,24 @@ else
     }
     private async void HandleValidSubmit()
     {
-
+        await AttService.Add(attendeeObject);
+    }
+    private void addMote(ChangeEventArgs e)
+    {
+        foreach (Mote mote in grupper)
+        {
+            if (mote.Id == Convert.ToInt32(e.Value.ToString()))
+            {
+                attendeeObject.homeGroup = mote;
+                break;
+            }
+        }
+    }
+    private void addOvernatting(ChangeEventArgs e)
+    {
+        if (Convert.ToInt32(e.Value.ToString()) == 1 || (Convert.ToInt32(e.Value.ToString()) == 0))
+        {
+            attendeeObject.Accomodation = Convert.ToInt32(e.Value.ToString());
+        }
     }
 }

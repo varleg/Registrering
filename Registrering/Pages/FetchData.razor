@@ -8,7 +8,8 @@
 
 @if (attendees == null)
 {
-    <p><em>Loading...</em></p>
+    <p><em>Her er en dansende pikachu mens du venter</em></p>
+    <img src="/Animations/loading_pikachu.gif" />
 }
 else
 {
@@ -18,30 +19,39 @@ else
                 <th>Hjemmegruppe</th>
                 <th>Clean dato</th>
                 <th>Overnatte</th>
-                <th>Edit</th>
-                <th>Delete</th>
+                <AuthorizeView Roles="admin">
+                    <Authorized>
+                        <th>Edit</th>
+                        <th>Delete</th>
+                    </Authorized>
+                </AuthorizeView>
             </tr>
         </thead>
         <tbody>
             @foreach (var attendee in attendees)
             {
                 <tr>
-                    <td>@attendee.Name</td>
+                    <td>@attendee.homeGroup.CommitteeName</td>
                     <td>@attendee.SpecialDate.ToShortDateString()</td>
-                    <td>@attendee.Accomodation</td>
-                    <td><input type="button" class="btn btn-primary" value="Edit" /></td>
-                    <td><input type="button" class="btn btn-danger" value="Delete" /></td>
+                    @if (attendee.Accomodation == 1)
+                    {
+                        <td>Ja</td>
+                    }
+                    else
+                    {
+                        <td>Nei</td>
+                    }
+                    <AuthorizeView Roles="admin">
+                        <Authorized>
+                            <td><input type="button" class="btn btn-primary" value="Edit" /></td>
+                            <td><input type="button" class="btn btn-danger" value="Delete" /></td>
+                        </Authorized>
+                    </AuthorizeView>
                 </tr>
             }
         </tbody>
     </table>
 }
-<AuthorizeView Roles="admin, user">
-    <Authorized>
-        <h1>Kun administrator</h1>
-    </Authorized>
-</AuthorizeView>
-
 @code {
 
     List<Attendee> attendees;
