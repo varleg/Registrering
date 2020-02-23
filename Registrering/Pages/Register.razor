@@ -1,0 +1,145 @@
+﻿@page "/register"
+@attribute [Authorize]
+@using Registrering.Models
+@using Registrering.Services
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject IAttendeeService AttService
+
+@if (allemoter == null)
+{
+    <p><em>Laster...</em></p>
+    <p><em>Her er en dansende pikachu mens du venter</em></p>
+    <img src="/Animations/loading_pikachu.gif" />
+}
+else
+{
+    <EditForm Model="@attendeeObject" OnValidSubmit="@HandleValidSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="form-group">
+            <label for="omradeBoks">Område</label>
+            <select id="omradeBoks" class="form-control" @onchange="select">
+                <option value="0" selected disabled>Velg et områrde</option>
+                @foreach (var omrade in omrader)
+                {
+                    <option value=@omrade.Key>@omrade.Value</option>
+                }
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="homeGroup">Hjemmegruppe</label>
+            @if (grupper != null)
+            {
+                <select id="homeGroup" class="form-control" @onchange="addMote">
+                    <option value="0" disabled selected>Velg en gruppe</option>
+                    @foreach (var gruppe in grupper)
+                    {
+                        <option value=@gruppe.Id>@gruppe.CommitteeName</option>
+                    }
+                </select>
+            }
+            else
+            {
+                <select disabled>
+                    <option value="0" selected>Velg en gruppe</option>
+                </select>
+            }
+        </div>
+
+        <div class="form-group">
+            <label for="DateSelect">Clean Dato</label>
+            <input type="date" class="form-control" id="DateSelect" value=@DateTime.Today.ToString("yyyy-MM-dd") min=@DateTime.Today.AddYears(-120) max=@DateTime.Today @onchange="addDate" />
+        </div>
+
+        <div class="form-group">
+            <label for="overnatting">Overnatting</label>
+            <select id="overmatting" class="form-control"
+                    @onchange="addOvernatting">
+                <option value="" selected disabled>Skal du overnatte?</option>
+                <option value=1>
+                    Ja
+                </option>
+                <option value=0>
+                    Nei
+                </option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Registrer</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="EditForm">Avbryt</button>
+    </EditForm>
+}
+@code {
+
+    List<Mote> allemoter;
+    List<Mote> grupper;
+    private string omradeBoksSelected { get; set; }
+    Dictionary<string, string> omrader = new Dictionary<string, string>
+{
+            { "East Area 1","Øst"},
+            { "East Area 2", "Øst 2"},
+            { "Middle Area", "Midt"},
+            { "North Area",  "Nord"},
+            { "South Area",  "Sør"},
+            { "West Area",   "Vest"},
+        };
+    private Attendee attendeeObject = new Attendee();
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        allemoter = await AttService.GetMoter();
+    }
+    private void addDate(ChangeEventArgs e)
+    {
+        string dateString = e.Value.ToString();
+        DateTime date = new DateTime();
+        if (DateTime.TryParse(dateString, out date))
+        {
+            attendeeObject.SpecialDate = date;
+        }
+        else
+        {
+            Console.Error.WriteLine("Error parsing date.");
+        }
+    }
+
+    private void select(ChangeEventArgs e)
+    {
+        grupper = new List<Mote>();
+        if (allemoter != null)
+        {
+            foreach (var mote in allemoter)
+            {
+                if (mote.ParentName == (string)e.Value)
+                {
+                    grupper.Add(mote);
+                }
+            }
+            this.StateHasChanged();
+        }
+    }
+    private async void HandleValidSubmit()
+    {
+        await AttService.Add(attendeeObject);
+    }
+    private void addMote(ChangeEventArgs e)
+    {
+        foreach (Mote mote in grupper)
+        {
+            if (mote.Id == Convert.ToInt32(e.Value.ToString()))
+            {
+                attendeeObject.homeGroup = mote;
+                break;
+            }
+        }
+    }
+    private void addOvernatting(ChangeEventArgs e)
+    {
+        if (Convert.ToInt32(e.Value.ToString()) == 1 || (Convert.ToInt32(e.Value.ToString()) == 0))
+        {
+            attendeeObject.Accomodation = Convert.ToInt32(e.Value.ToString());
+        }
+    }
+}
