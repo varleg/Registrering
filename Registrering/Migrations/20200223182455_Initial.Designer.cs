@@ -10,8 +10,8 @@ using Registrering.Data;
 namespace Registrering.Migrations
 {
     [DbContext(typeof(AttendeeDbContext))]
-    [Migration("20200216081658_motmig")]
-    partial class motmig
+    [Migration("20200223182455_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -28,8 +28,8 @@ namespace Registrering.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<bool>("Accomodation")
-                        .HasColumnType("bit");
+                    b.Property<int>("Accomodation")
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
@@ -37,7 +37,12 @@ namespace Registrering.Migrations
                     b.Property<DateTime>("SpecialDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("homeGroupId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("homeGroupId");
 
                     b.ToTable("Attendees");
                 });
@@ -85,57 +90,6 @@ namespace Registrering.Migrations
                     b.Property<string>("Directions")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("F10")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("F11")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("F12")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("F13")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("F14")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("F15")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("F16")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("F17")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("F18")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("F25")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("F26")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("F27")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("F36")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("F6")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("F7")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("F8")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("F9")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Format1")
                         .HasColumnType("nvarchar(max)");
 
@@ -172,24 +126,33 @@ namespace Registrering.Migrations
                     b.Property<string>("State")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<double>("Time")
-                        .HasColumnType("float");
+                    b.Property<string>("Time")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("WheelChr")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<double>("Zip")
-                        .HasColumnType("float");
+                    b.Property<int>("Zip")
+                        .HasColumnType("int");
 
-                    b.Property<string>("latitude")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<decimal>("latitude")
+                        .HasColumnType("decimal(18,2)");
 
-                    b.Property<string>("longitude")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<decimal>("longitude")
+                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
 
                     b.ToTable("Moter");
+                });
+
+            modelBuilder.Entity("Registrering.Models.Attendee", b =>
+                {
+                    b.HasOne("Registrering.Models.Mote", "homeGroup")
+                        .WithMany()
+                        .HasForeignKey("homeGroupId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

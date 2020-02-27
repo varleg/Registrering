@@ -88,57 +88,6 @@ namespace Registrering.Migrations
                     b.Property<string>("Directions")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Field10")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Field11")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Field12")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Field13")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Field14")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Field15")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Field16")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Field17")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Field18")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Field25")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Field26")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Field27")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Field36")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Field6")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Field7")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Field8")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Field9")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Format1")
                         .HasColumnType("nvarchar(max)");
 

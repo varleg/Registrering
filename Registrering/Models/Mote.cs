@@ -15,23 +15,23 @@ namespace Registrering.Models
         public string AddDate { get; set; }
         public string AreaRegion { get; set; }
         public string ParentName { get; set; }
-        public string Field6 { get; set; }
-        public string Field7 { get; set; }
-        public string Field8 { get; set; }
-        public string Field9 { get; set; }
-        public string Field10 { get; set; }
-        public string Field11 { get; set; }
-        public string Field12 { get; set; }
-        public string Field13 { get; set; }
-        public string Field14 { get; set; }
-        public string Field15 { get; set; }
-        public string Field16 { get; set; }
-        public string Field17 { get; set; }
-        public string Field18 { get; set; }
-        public string Field25 { get; set; }
-        public string Field26 { get; set; }
-        public string Field27 { get; set; }
-        public string Field36 { get; set; }
+//# public string Field6 { get; set; }
+//# public string Field7 { get; set; }
+//# public string Field8 { get; set; }
+//# public string Field9 { get; set; }
+//# public string Field10 { get; set; }
+//# public string Field11 { get; set; }
+//# public string Field12 { get; set; }
+//# public string Field13 { get; set; }
+//# public string Field14 { get; set; }
+//# public string Field15 { get; set; }
+//# public string Field16 { get; set; }
+//# public string Field17 { get; set; }
+//# public string Field18 { get; set; }
+//# public string Field25 { get; set; }
+//# public string Field26 { get; set; }
+//# public string Field27 { get; set; }
+//# public string Field36 { get; set; }
         public string Format1 { get; set; }
         public string Format2 { get; set; }
         public string Format3 { get; set; }

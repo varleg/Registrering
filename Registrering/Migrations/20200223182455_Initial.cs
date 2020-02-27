@@ -2,7 +2,7 @@
 
 namespace Registrering.Migrations
 {
-    public partial class nmeMigration : Migration
+    public partial class Initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
