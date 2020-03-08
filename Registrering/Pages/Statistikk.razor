@@ -1,0 +1,88 @@
+﻿@page "/Statistikk"
+@using Registrering.Services
+@using Registrering.Models
+@inject IAttendeeService AttService
+
+@using ChartJs.Blazor.Charts
+@using ChartJs.Blazor.ChartJS.PieChart
+@using ChartJs.Blazor.ChartJS.Common.Properties
+@using ChartJs.Blazor.Util
+
+<h3>Statistikk</h3>
+
+
+<ChartJsPieChart @ref="_pieChartJs" Config="@_config" Width="600" Height="300" />
+
+@code {
+    List<Attendee> attendees;
+    List<Mote> moter;
+    int totalDays;
+    int totalYears;
+    private PieConfig _config;
+    private ChartJsPieChart _pieChartJs;
+
+
+    //I rekkefølgen -> "Øst", "Øst 2", "Midt", "Nord", "Sør", "Vest"
+    int[] totaltPerArea;
+    protected override async Task OnInitializedAsync()
+    {
+        attendees = await AttService.Get();
+        moter = await AttService.GetMoter();
+        moter = moter.OrderBy(x => x.CommitteeName).ToList();
+    }
+
+    protected override void OnInitialized()
+    {
+        _config = new PieConfig
+        {
+            Options = new PieOptions
+            {
+                Title = new OptionsTitle
+                {
+                    Display = true,
+                    Text = "Rusfri tid per område"
+                },
+                Responsive = true,
+                Animation = new ArcAnimation
+                {
+                    AnimateRotate = true,
+                    AnimateScale = true
+                }
+            }
+        };
+
+        _config.Data.Labels.AddRange(new[] { "Øst", "Øst 2", "Midt", "Nord", "Sør", "Vest" });
+
+        var pieSet = new PieDataset
+        {
+            BackgroundColor = new[] { ColorUtil.RandomColorString(), ColorUtil.RandomColorString(), ColorUtil.RandomColorString(), ColorUtil.RandomColorString() },
+            BorderWidth = 0,
+            HoverBackgroundColor = ColorUtil.RandomColorString(),
+            HoverBorderColor = ColorUtil.RandomColorString(),
+            HoverBorderWidth = 1,
+            BorderColor = "#ffffff",
+        };
+
+        pieSet.Data.AddRange(new double[] { 4, 5, 6, 7 });
+        _config.Data.Datasets.Add(pieSet);
+    }
+
+    private int getTotalDays()
+    {
+        int total = 0;
+        DateTime today = DateTime.Today;
+        foreach (var attendee in attendees)
+        {
+            total += ((TimeSpan)(today - attendee.SpecialDate)).Days;
+        }
+        return total;
+    }
+    private int[] getDaysPerArea()
+    {
+        int[] daysPerArea = {0, 0, 0, 0, 0, 0};
+        foreach(var attendee in attendees)
+        {
+        }
+        return daysPerArea;
+    }
+}

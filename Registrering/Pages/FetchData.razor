@@ -6,7 +6,7 @@
 <h1>Registrerte</h1>
 
 
-@if (attendees == null)
+@if (attendees == null && moter == null)
 {
     <p><em>Her er en dansende pikachu mens du venter</em></p>
     <img src="/Animations/loading_pikachu.gif" />
@@ -31,7 +31,7 @@ else
             @foreach (var attendee in attendees)
             {
                 <tr>
-                    <td>@attendee.homeGroup.CommitteeName</td>
+                    <td>@GetMoteNavn(attendee.homeGroupId)</td>
                     <td>@attendee.SpecialDate.ToShortDateString()</td>
                     @if (attendee.Accomodation == 1)
                     {
@@ -55,9 +55,24 @@ else
 @code {
 
     List<Attendee> attendees;
+    List<Mote> moter;
 
     protected override async Task OnInitializedAsync()
     {
         attendees = await AttService.Get();
+        moter = await AttService.GetMoter();
+    }
+
+    private string GetMoteNavn(int id)
+    {
+        foreach(var mote in moter)
+        {
+            if(mote.Id == id)
+            {
+                return mote.CommitteeName;
+            }
+
+        }
+        return "Ikke definert";
     }
 }

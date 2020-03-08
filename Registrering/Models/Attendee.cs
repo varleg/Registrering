@@ -17,6 +17,7 @@ namespace Registrering.Models
         public DateTime SpecialDate { get; set; }
         [Required(ErrorMessage = "Du må velge en hjemmegruppe. " +
             "Dersom du ikke har en, velg et område (spør en i registreringa for å finne det du hører til) og 'Annet' i feltet  for gruppe.")]
-        public Mote homeGroup { get; set; }
+        public int homeGroupId { get; set; }
+        public int Area { get; set; }
     }
 }

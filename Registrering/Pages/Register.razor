@@ -7,68 +7,68 @@
 
 @if (allemoter == null)
 {
-    <p><em>Laster...</em></p>
-    <p><em>Her er en dansende pikachu mens du venter</em></p>
-    <img src="/Animations/loading_pikachu.gif" />
+<p><em>Laster...</em></p>
+<p><em>Her er en dansende pikachu mens du venter</em></p>
+<img src="/Animations/loading_pikachu.gif" />
 }
 else
 {
-    <EditForm Model="@attendeeObject" OnValidSubmit="@HandleValidSubmit">
-        <DataAnnotationsValidator />
-        <ValidationSummary />
+<EditForm Model="@attendeeObject" OnValidSubmit="@HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
 
-        <div class="form-group">
-            <label for="omradeBoks">Område</label>
-            <select id="omradeBoks" class="form-control" @onchange="select">
-                <option value="0" selected disabled>Velg et områrde</option>
-                @foreach (var omrade in omrader)
+    <div class="form-group">
+        <label for="omradeBoks">Område</label>
+        <select id="omradeBoks" class="form-control" @onchange="select">
+            <option value="0" selected disabled>Velg et områrde</option>
+            @foreach (var omrade in omrader)
                 {
-                    <option value=@omrade.Key>@omrade.Value</option>
+            <option value=@omrade.Key>@omrade.Value</option>
                 }
-            </select>
-        </div>
+        </select>
+    </div>
 
-        <div class="form-group">
-            <label for="homeGroup">Hjemmegruppe</label>
-            @if (grupper != null)
+    <div class="form-group">
+        <label for="homeGroup">Hjemmegruppe</label>
+        @if (grupper != null)
             {
-                <select id="homeGroup" class="form-control" @onchange="addMote">
-                    <option value="0" disabled selected>Velg en gruppe</option>
-                    @foreach (var gruppe in grupper)
+        <select id="homeGroup" class="form-control" @onchange="addMote">
+            <option value="0" disabled selected>Velg en gruppe</option>
+            @foreach (var gruppe in grupper)
                     {
-                        <option value=@gruppe.Id>@gruppe.CommitteeName</option>
+            <option value=@gruppe.Id>@gruppe.CommitteeName</option>
                     }
-                </select>
+        </select>
             }
             else
             {
-                <select disabled>
-                    <option value="0" selected>Velg en gruppe</option>
-                </select>
+        <select disabled>
+            <option value="0" selected>Velg en gruppe</option>
+        </select>
             }
-        </div>
+    </div>
 
-        <div class="form-group">
-            <label for="DateSelect">Clean Dato</label>
-            <input type="date" class="form-control" id="DateSelect" value=@DateTime.Today.ToString("yyyy-MM-dd") min=@DateTime.Today.AddYears(-120) max=@DateTime.Today @onchange="addDate" />
-        </div>
+    <div class="form-group">
+        <label for="DateSelect">Clean Dato</label>
+        <input type="date" class="form-control" id="DateSelect" value=@DateTime.Today.ToString("yyyy-MM-dd") min=@DateTime.Today.AddYears(-120) max=@DateTime.Today @onchange="addDate" />
+    </div>
 
-        <div class="form-group">
-            <label for="overnatting">Overnatting</label>
-            <select id="overmatting" class="form-control"
-                    @onchange="addOvernatting">
-                <option value="" selected disabled>Skal du overnatte?</option>
-                <option value=1>
-                    Ja
-                </option>
-                <option value=0>
-                    Nei
-                </option>
-            </select>
-        </div>
-        <button type="submit" class="btn btn-primary">Registrer</button>
-        <button type="button" class="btn btn-secondary" data-dismiss="EditForm">Avbryt</button>
-    </EditForm>
+    <div class="form-group">
+        <label for="overnatting">Overnatting</label>
+        <select id="overmatting" class="form-control"
+                @onchange="addOvernatting">
+            <option value="" selected disabled>Skal du overnatte?</option>
+            <option value=1>
+                Ja
+            </option>
+            <option value=0>
+                Nei
+            </option>
+        </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Registrer</button>
+    <button type="button" class="btn btn-secondary" data-dismiss="EditForm">Avbryt</button>
+</EditForm>
 }
 @code {
 
@@ -90,6 +90,7 @@ else
     {
 
         allemoter = await AttService.GetMoter();
+        allemoter =  allemoter.OrderBy(x => x.CommitteeName).ToList();
     }
     private void addDate(ChangeEventArgs e)
     {
@@ -130,14 +131,14 @@ else
         {
             if (mote.Id == Convert.ToInt32(e.Value.ToString()))
             {
-                attendeeObject.homeGroup = mote;
-                break;
+                attendeeObject.homeGroupId = mote.Id;
+                    break;
             }
         }
     }
     private void addOvernatting(ChangeEventArgs e)
     {
-        if (Convert.ToInt32(e.Value.ToString()) == 1 || (Convert.ToInt32(e.Value.ToString()) == 0))
+            if (Convert.ToInt32(e.Value.ToString()) == 1 || (Convert.ToInt32(e.Value.ToString()) == 0))
         {
             attendeeObject.Accomodation = Convert.ToInt32(e.Value.ToString());
         }

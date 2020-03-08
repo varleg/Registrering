@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Registrering.Data;
 
 namespace Registrering.Migrations
 {
     [DbContext(typeof(AttendeeDbContext))]
-    partial class AttendeeDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200301144053_hgtoid")]
+    partial class hgtoid
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -27,9 +29,6 @@ namespace Registrering.Migrations
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<int>("Accomodation")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Area")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
